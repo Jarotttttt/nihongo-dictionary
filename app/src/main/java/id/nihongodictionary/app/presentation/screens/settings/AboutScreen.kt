@@ -69,7 +69,14 @@ fun AboutScreen(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "Author: Xyuraa",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         text = "Aplikasi kamus bahasa Jepang–Indonesia native Android berkecepatan tinggi, bebas iklan, dan berfungsi 100% tanpa memerlukan koneksi internet.",
                         style = MaterialTheme.typography.bodyMedium
