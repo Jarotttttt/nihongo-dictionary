@@ -1,0 +1,64 @@
+# Nihongo Dictionary E2E Kanji Stroke Order Flow
+#
+# Validates:
+# - Search query for word with Kanji ("食べる")
+# - Navigation to Word Detail
+# - Inspection of constituent kanji ("食")
+# - Navigation to Kanji Detail Screen
+# - Verification of Stroke Order Canvas and play control
+
+appId: id.nihongodictionary.app.debug
+tags:
+  - kanji
+  - stroke-order
+---
+# 1. Launch Application
+- launchApp
+
+- extendedWaitUntil:
+    visible:
+      id: "search-input"
+    timeout: 10000
+
+# 2. Search Word
+- tapOn:
+    id: "search-input"
+- inputText: "食べる"
+
+- extendedWaitUntil:
+    visible: "食べる"
+    timeout: 5000
+
+# 3. Open Word Detail
+- tapOn: "食べる"
+
+- extendedWaitUntil:
+    visible: "Detail Kosakata"
+    timeout: 5000
+
+# 4. Tap Constituent Kanji "食"
+- scrollUntilVisible:
+    element: "食"
+    direction: DOWN
+    timeout: 5000
+
+- tapOn: "食"
+
+# 5. Verify Kanji Detail Screen
+- extendedWaitUntil:
+    visible: "Detail Kanji"
+    timeout: 5000
+
+- assertVisible: "Urutan Coretan (Hitsujun)"
+- assertVisible:
+    id: "kanji-stroke-canvas"
+
+# 6. Interact with Stroke Order Controls
+- tapOn:
+    id: "btn-stroke-play"
+
+- assertVisible: "Arti Bahasa Indonesia"
+- assertVisible: "Onyomi (音読み):"
+- assertVisible: "Kunyomi (訓読み):"
+
+- takeScreenshot: 02-kanji-stroke-detail

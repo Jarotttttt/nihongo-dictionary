@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -89,6 +90,7 @@ fun StrokeOrderCanvas(
         Box(
             modifier = Modifier
                 .size(220.dp)
+                .testTag("kanji-stroke-canvas")
                 .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f), MaterialTheme.shapes.medium)
                 .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium)
         ) {
@@ -129,6 +131,7 @@ fun StrokeOrderCanvas(
             verticalAlignment = Alignment.CenterVertically
         ) {
             OutlinedIconButton(
+                modifier = Modifier.testTag("btn-stroke-prev"),
                 onClick = {
                     isPlaying = false
                     currentStrokeIndex = (currentStrokeIndex - 1).coerceAtLeast(0)
@@ -139,6 +142,7 @@ fun StrokeOrderCanvas(
             }
 
             FilledTonalIconButton(
+                modifier = Modifier.testTag("btn-stroke-play"),
                 onClick = { isPlaying = !isPlaying }
             ) {
                 Icon(
@@ -148,6 +152,7 @@ fun StrokeOrderCanvas(
             }
 
             OutlinedIconButton(
+                modifier = Modifier.testTag("btn-stroke-next"),
                 onClick = {
                     isPlaying = false
                     currentStrokeIndex = (currentStrokeIndex + 1).coerceAtMost(strokes.size)

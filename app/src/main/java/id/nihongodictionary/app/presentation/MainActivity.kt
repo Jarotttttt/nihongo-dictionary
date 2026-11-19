@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -61,6 +62,7 @@ fun MainAppScaffold() {
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(
+                    modifier = Modifier.testTag("tab-kamus"),
                     selected = currentRoute?.contains("Search") == true,
                     onClick = {
                         navController.navigate(Screen.Search) {
@@ -78,6 +80,7 @@ fun MainAppScaffold() {
                     label = { Text("Kamus") }
                 )
                 NavigationBarItem(
+                    modifier = Modifier.testTag("tab-saved"),
                     selected = currentRoute?.contains("Saved") == true,
                     onClick = {
                         navController.navigate(Screen.Saved) {
@@ -95,6 +98,7 @@ fun MainAppScaffold() {
                     label = { Text("Tersimpan") }
                 )
                 NavigationBarItem(
+                    modifier = Modifier.testTag("tab-settings"),
                     selected = currentRoute?.contains("Settings") == true,
                     onClick = {
                         navController.navigate(Screen.Settings) {

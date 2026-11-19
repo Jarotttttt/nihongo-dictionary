@@ -36,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -64,12 +65,17 @@ fun SearchScreen(
         OutlinedTextField(
             value = query,
             onValueChange = viewModel::onQueryChange,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("search-input"),
             placeholder = { Text("Ketik Kanji, Kana, Romaji, atau Indonesia...") },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
             trailingIcon = {
                 if (query.isNotEmpty()) {
-                    IconButton(onClick = viewModel::clearQuery) {
+                    IconButton(
+                        onClick = viewModel::clearQuery,
+                        modifier = Modifier.testTag("btn-clear-search")
+                    ) {
                         Icon(Icons.Default.Clear, contentDescription = "Hapus")
                     }
                 }
@@ -168,6 +174,7 @@ fun WordResultCard(
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
+            .testTag("word-card-${word.id}")
             .clickable(onClick = onClick)
             .semantics(mergeDescendants = true) {},
         shape = MaterialTheme.shapes.medium

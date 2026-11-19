@@ -1,0 +1,90 @@
+# Nihongo Dictionary E2E Smoke Test
+#
+# Validates:
+# - App launch and Home Search UI
+# - Multi-script search query (Romaji "taberu" -> Kanji "食べる")
+# - Navigation to Word Detail Screen
+# - Verification of Indonesian meanings and Tatoeba example sentences
+# - Bottom navigation between Kamus, Tersimpan, and Pengaturan
+# - Verification of Legal Attribution Screen
+
+appId: id.nihongodictionary.app.debug
+tags:
+  - ci
+  - smoke
+---
+# 1. Launch Application
+- launchApp:
+    clearState: true
+
+# 2. Verify Home / Search Screen
+- extendedWaitUntil:
+    visible:
+      id: "search-input"
+    timeout: 10000
+
+- assertVisible: "Kamus Jepang–Indonesia"
+
+# 3. Perform Word Search
+- tapOn:
+    id: "search-input"
+- inputText: "taberu"
+
+# 4. Verify Result Card
+- extendedWaitUntil:
+    visible: "食べる"
+    timeout: 5000
+
+- assertVisible: "makan; mengonsumsi"
+
+# 5. Open Word Detail Screen
+- tapOn: "食べる"
+
+- extendedWaitUntil:
+    visible: "Detail Kosakata"
+    timeout: 5000
+
+- assertVisible: "Arti & Makna"
+- assertVisible: "makan; mengonsumsi"
+- assertVisible: "Contoh Kalimat (Tatoeba)"
+
+# 6. Test Back Navigation
+- back
+
+- extendedWaitUntil:
+    visible:
+      id: "search-input"
+    timeout: 5000
+
+# 7. Test Navigation to Saved Vocabulary Tab
+- tapOn:
+    id: "tab-saved"
+
+- extendedWaitUntil:
+    visible: "Kosakata Tersimpan"
+    timeout: 5000
+
+# 8. Test Navigation to Settings Tab
+- tapOn:
+    id: "tab-settings"
+
+- extendedWaitUntil:
+    visible: "Pengaturan"
+    timeout: 5000
+
+- assertVisible: "Pelafalan Suara (TTS)"
+- assertVisible: "Tema Tampilan"
+
+# 9. Test Navigation to Legal Attribution Screen
+- tapOn: "Tentang & Atribusi Lisensi"
+
+- extendedWaitUntil:
+    visible: "Tentang & Atribusi"
+    timeout: 5000
+
+- assertVisible: "Kamus JaIsho (Terjemahan Bahasa Indonesia)"
+- assertVisible: "EDRDG (JMdict & KANJIDIC2)"
+- assertVisible: "KanjiVG (Visual Urutan Coretan Kanji)"
+- assertVisible: "Tatoeba Project (Contoh Kalimat)"
+
+- takeScreenshot: 01-smoke-test-success
