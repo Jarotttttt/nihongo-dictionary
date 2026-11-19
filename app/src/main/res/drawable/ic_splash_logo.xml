@@ -1,0 +1,23 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Crimson Red Circle Emblem -->
+    <path
+        android:fillColor="#BC002D"
+        android:pathData="M54,54m-44,0a44,44 0 1,0 88,0a44,44 0 1,0 -88,0" />
+    <!-- White Torii / Kanji Accent -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M34,40 L74,40 L74,44 L34,44 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,34 L78,34 L76,38 L32,38 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,40 L40,74 L44,74 L44,40 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M64,40 L64,74 L68,74 L68,40 Z" />
+</vector>

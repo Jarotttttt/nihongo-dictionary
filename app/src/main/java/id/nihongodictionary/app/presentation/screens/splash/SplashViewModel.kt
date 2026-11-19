@@ -22,7 +22,7 @@ class SplashViewModel @Inject constructor(
     private val _isReady = MutableStateFlow(false)
     val isReady: StateFlow<Boolean> = _isReady.asStateFlow()
 
-    private val _statusText = MutableStateFlow("Menyiapkan aplikasi...")
+    private val _statusText = MutableStateFlow("Memuat basis data kamus...")
     val statusText: StateFlow<String> = _statusText.asStateFlow()
 
     init {
@@ -36,20 +36,21 @@ class SplashViewModel @Inject constructor(
             // Pre-warm database extraction and read-only connection in IO dispatcher
             withContext(dispatchers.io) {
                 try {
-                    _statusText.value = "Memuat basis data kamus..."
                     val db = dbHelper.getReadableDatabase()
-                    // Warm up SQLite by querying version
                     db.version
                 } catch (e: Exception) {
-                    _statusText.value = "Menyiapkan sistem..."
+                    // Handled gracefully by UI state
                 }
             }
 
-            // Ensure splash animation plays smoothly for at least 1200ms
-            val elapsedTime = System.currentTimeMillis() - startTime
-            val remainingDelay = (1200 - elapsedTime).coerceAtLeast(400)
-            delay(remainingDelay)
+            // Staged luxury splash display (~2800ms total)
+            delay(1200)
+            _statusText.value = "Menyiapkan 320.000+ kosakata & kanji..."
 
+            delay(1000)
+            _statusText.value = "Selamat belajar! (日本語を勉強しましょう)"
+
+            delay(600)
             _isReady.value = true
         }
     }

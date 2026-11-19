@@ -42,6 +42,7 @@ import id.nihongodictionary.app.presentation.screens.search.SearchViewModel
 import id.nihongodictionary.app.presentation.screens.settings.AboutScreen
 import id.nihongodictionary.app.presentation.screens.settings.SettingsScreen
 import id.nihongodictionary.app.presentation.screens.settings.SettingsViewModel
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import id.nihongodictionary.app.presentation.screens.splash.SplashScreen
 import id.nihongodictionary.app.presentation.screens.splash.SplashViewModel
 import id.nihongodictionary.app.presentation.screens.worddetail.WordDetailScreen
@@ -50,6 +51,7 @@ import id.nihongodictionary.app.presentation.screens.worddetail.WordDetailViewMo
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
