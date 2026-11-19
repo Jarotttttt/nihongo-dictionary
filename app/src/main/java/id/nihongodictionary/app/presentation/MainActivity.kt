@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -31,6 +32,10 @@ import androidx.navigation.toRoute
 import dagger.hilt.android.AndroidEntryPoint
 import id.nihongodictionary.app.presentation.designsystem.NihongoDictionaryTheme
 import id.nihongodictionary.app.presentation.navigation.Screen
+import id.nihongodictionary.app.presentation.screens.search.SearchScreen
+import id.nihongodictionary.app.presentation.screens.search.SearchViewModel
+import id.nihongodictionary.app.presentation.screens.worddetail.WordDetailScreen
+import id.nihongodictionary.app.presentation.screens.worddetail.WordDetailViewModel
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -115,12 +120,25 @@ fun MainAppScaffold() {
                 startDestination = Screen.Search
             ) {
                 composable<Screen.Search> {
-                    // Placeholder for SearchScreen
-                    Text("Layar Pencarian Kamus")
+                    val viewModel: SearchViewModel = hiltViewModel()
+                    SearchScreen(
+                        viewModel = viewModel,
+                        onWordClick = { wordId ->
+                            navController.navigate(Screen.WordDetail(wordId))
+                        }
+                    )
                 }
                 composable<Screen.WordDetail> { backStackEntry ->
                     val route: Screen.WordDetail = backStackEntry.toRoute()
-                    Text("Detail Kosakata ID: ${route.wordId}")
+                    val viewModel: WordDetailViewModel = hiltViewModel()
+                    WordDetailScreen(
+                        wordId = route.wordId,
+                        viewModel = viewModel,
+                        onBackClick = { navController.popBackStack() },
+                        onKanjiClick = { kanjiId ->
+                            navController.navigate(Screen.KanjiDetail(kanjiId))
+                        }
+                    )
                 }
                 composable<Screen.KanjiDetail> { backStackEntry ->
                     val route: Screen.KanjiDetail = backStackEntry.toRoute()
