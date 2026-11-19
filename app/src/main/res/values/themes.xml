@@ -7,7 +7,7 @@
         <item name="android:navigationBarColor">#141218</item>
     </style>
 
-    <!-- SplashScreen Starting Theme (Prevents any blank screen on cold boot) -->
+    <!-- SplashScreen Starting Theme: Only shows the clean icon in the center -->
     <style name="Theme.NihongoDictionary.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">#141218</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
