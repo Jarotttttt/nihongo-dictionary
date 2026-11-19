@@ -5,6 +5,8 @@ import id.nihongodictionary.app.core.common.DataError
 import id.nihongodictionary.app.core.common.DispatcherProvider
 import id.nihongodictionary.app.core.database.dictionary.DictionaryDatabaseHelper
 import id.nihongodictionary.app.domain.model.KanjiDetail
+import id.nihongodictionary.app.domain.model.KanjiFilterCategory
+import id.nihongodictionary.app.domain.model.KanjiGridItem
 import id.nihongodictionary.app.domain.model.KanjiReadingItem
 import id.nihongodictionary.app.domain.model.KanjiStrokeItem
 import id.nihongodictionary.app.domain.model.Word
@@ -145,6 +147,52 @@ class KanjiRepositoryImpl @Inject constructor(
                         relatedWords = relatedWords
                     )
                 )
+            } catch (e: SQLiteException) {
+                Result.failure(DataError.Database(e))
+            } catch (e: Exception) {
+                Result.failure(DataError.Database(e))
+            }
+        }
+
+    override suspend fun getKanjiByFilter(filter: KanjiFilterCategory): Result<List<KanjiGridItem>> =
+        withContext(dispatchers.io) {
+            try {
+                val db = dbHelper.getReadableDatabase()
+                val list = mutableListOf<KanjiGridItem>()
+
+                val (whereClause, args) = when {
+                    filter.grade != null -> "k.grade = ?" to arrayOf(filter.grade.toString())
+                    filter.jlptLevel != null -> "k.jlpt_level = ?" to arrayOf(filter.jlptLevel.toString())
+                    else -> "k.grade = 1" to arrayOf("1")
+                }
+
+                val sql = """
+                    SELECT k.id, k.character, k.stroke_count, k.meaning_id, k.grade, k.jlpt_level,
+                           (SELECT reading FROM kanji_readings WHERE kanji_id = k.id AND reading_type = 'onyomi' LIMIT 1) as on_read,
+                           (SELECT reading FROM kanji_readings WHERE kanji_id = k.id AND reading_type = 'kunyomi' LIMIT 1) as kun_read
+                    FROM kanji k
+                    WHERE $whereClause
+                    ORDER BY k.stroke_count ASC, k.id ASC
+                """.trimIndent()
+
+                db.rawQuery(sql, args).use { cursor ->
+                    while (cursor.moveToNext()) {
+                        list.add(
+                            KanjiGridItem(
+                                id = cursor.getLong(0),
+                                character = cursor.getString(1),
+                                strokeCount = cursor.getInt(2),
+                                meaningId = cursor.getString(3),
+                                grade = if (cursor.isNull(4)) null else cursor.getInt(4),
+                                jlptLevel = if (cursor.isNull(5)) null else cursor.getInt(5),
+                                onyomi = if (cursor.isNull(6)) null else cursor.getString(6),
+                                kunyomi = if (cursor.isNull(7)) null else cursor.getString(7)
+                            )
+                        )
+                    }
+                }
+
+                Result.success(list)
             } catch (e: SQLiteException) {
                 Result.failure(DataError.Database(e))
             } catch (e: Exception) {

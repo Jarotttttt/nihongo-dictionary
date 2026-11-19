@@ -7,6 +7,9 @@ sealed interface Screen {
     data object Search : Screen
 
     @Serializable
+    data object Characters : Screen
+
+    @Serializable
     data class WordDetail(val wordId: Long) : Screen
 
     @Serializable

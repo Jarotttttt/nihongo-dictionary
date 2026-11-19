@@ -11,9 +11,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Translate
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -34,6 +36,8 @@ import androidx.navigation.toRoute
 import dagger.hilt.android.AndroidEntryPoint
 import id.nihongodictionary.app.presentation.designsystem.NihongoDictionaryTheme
 import id.nihongodictionary.app.presentation.navigation.Screen
+import id.nihongodictionary.app.presentation.screens.characters.CharactersScreen
+import id.nihongodictionary.app.presentation.screens.characters.CharactersViewModel
 import id.nihongodictionary.app.presentation.screens.kanji.KanjiDetailScreen
 import id.nihongodictionary.app.presentation.screens.kanji.KanjiDetailViewModel
 import id.nihongodictionary.app.presentation.screens.saved.SavedVocabularyScreen
@@ -89,6 +93,24 @@ fun MainAppScaffold() {
                     label = { Text("Kamus") }
                 )
                 NavigationBarItem(
+                    modifier = Modifier.testTag("tab-characters"),
+                    selected = currentRoute?.contains("Characters") == true,
+                    onClick = {
+                        navController.navigate(Screen.Characters) {
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = if (currentRoute?.contains("Characters") == true) Icons.Filled.Translate else Icons.Outlined.Translate,
+                            contentDescription = "Aksara"
+                        )
+                    },
+                    label = { Text("Aksara") }
+                )
+                NavigationBarItem(
                     modifier = Modifier.testTag("tab-saved"),
                     selected = currentRoute?.contains("Saved") == true,
                     onClick = {
@@ -138,6 +160,15 @@ fun MainAppScaffold() {
                         viewModel = viewModel,
                         onWordClick = { wordId ->
                             navController.navigate(Screen.WordDetail(wordId))
+                        }
+                    )
+                }
+                composable<Screen.Characters> {
+                    val viewModel: CharactersViewModel = hiltViewModel()
+                    CharactersScreen(
+                        viewModel = viewModel,
+                        onKanjiClick = { kanjiId ->
+                            navController.navigate(Screen.KanjiDetail(kanjiId))
                         }
                     )
                 }

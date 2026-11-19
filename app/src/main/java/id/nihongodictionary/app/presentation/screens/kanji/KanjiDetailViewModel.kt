@@ -3,6 +3,7 @@ package id.nihongodictionary.app.presentation.screens.kanji
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import id.nihongodictionary.app.core.tts.JapaneseTtsManager
 import id.nihongodictionary.app.domain.usecase.GetKanjiDetailUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class KanjiDetailViewModel @Inject constructor(
-    private val getKanjiDetailUseCase: GetKanjiDetailUseCase
+    private val getKanjiDetailUseCase: GetKanjiDetailUseCase,
+    private val ttsManager: JapaneseTtsManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<KanjiUiState>(KanjiUiState.Loading)
@@ -30,6 +32,12 @@ class KanjiDetailViewModel @Inject constructor(
                         error.localizedMessage ?: "Gagal memuat detail kanji"
                     )
                 }
+        }
+    }
+
+    fun playAudio(text: String) {
+        if (text.isNotBlank()) {
+            ttsManager.speak(text)
         }
     }
 }

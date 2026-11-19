@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -86,7 +87,11 @@ fun KanjiDetailScreen(
                     }
                 }
                 is KanjiUiState.Success -> {
-                    KanjiDetailContent(kanji = state.kanji, onWordClick = onWordClick)
+                    KanjiDetailContent(
+                        kanji = state.kanji,
+                        onWordClick = onWordClick,
+                        onPlayAudio = viewModel::playAudio
+                    )
                 }
             }
         }
@@ -96,7 +101,8 @@ fun KanjiDetailScreen(
 @Composable
 fun KanjiDetailContent(
     kanji: KanjiDetail,
-    onWordClick: (Long) -> Unit
+    onWordClick: (Long) -> Unit,
+    onPlayAudio: (String) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -117,12 +123,25 @@ fun KanjiDetailContent(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = "Urutan Coretan (Hitsujun)",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Urutan Coretan (Hitsujun)",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        IconButton(onClick = { onPlayAudio(kanji.character) }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                                contentDescription = "Dengarkan Kanji",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
                     Spacer(modifier = Modifier.height(12.dp))
                     StrokeOrderCanvas(strokes = kanji.strokes)
                 }
@@ -155,30 +174,63 @@ fun KanjiDetailContent(
                     val kunyomi = kanji.readings.filter { it.type == "kunyomi" }
 
                     if (onyomi.isNotEmpty()) {
-                        Text(
-                            text = "Onyomi (音読み):",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.secondary,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = onyomi.joinToString(", ") { it.reading },
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Onyomi (音読み):",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = onyomi.joinToString(", ") { it.reading },
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+                            IconButton(onClick = { onPlayAudio(onyomi.first().reading) }) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                                    contentDescription = "Audio Onyomi",
+                                    tint = MaterialTheme.colorScheme.secondary
+                                )
+                            }
+                        }
                         Spacer(modifier = Modifier.height(8.dp))
                     }
 
                     if (kunyomi.isNotEmpty()) {
-                        Text(
-                            text = "Kunyomi (訓読み):",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.tertiary,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = kunyomi.joinToString(", ") { it.reading },
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Kunyomi (訓読み):",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.tertiary,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = kunyomi.joinToString(", ") { it.reading },
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+                            IconButton(onClick = {
+                                val readingToSpeak = kunyomi.first().reading.replace(".", "")
+                                onPlayAudio(readingToSpeak)
+                            }) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                                    contentDescription = "Audio Kunyomi",
+                                    tint = MaterialTheme.colorScheme.tertiary
+                                )
+                            }
+                        }
                     }
 
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
