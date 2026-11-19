@@ -70,6 +70,7 @@ import id.nihongodictionary.app.domain.model.KanjiFilterCategory
 import id.nihongodictionary.app.domain.model.KanjiGridItem
 import id.nihongodictionary.app.domain.model.RadicalData
 import id.nihongodictionary.app.domain.model.RadicalItem
+import id.nihongodictionary.app.presentation.designsystem.component.StrokeOrderCanvas
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -556,6 +557,35 @@ fun KanaDetailBottomSheet(
             }
 
             Spacer(modifier = Modifier.height(20.dp))
+
+            // 2. Interactive Stroke Order Canvas (Persis seperti Kanji!)
+            if (kana.strokes.isNotEmpty()) {
+                ElevatedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.large,
+                    colors = CardDefaults.elevatedCardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Urutan Coretan (Hitsujun)",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        StrokeOrderCanvas(strokes = kana.strokes)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+            }
 
             // 2. Stroke Order Section (Urutan Penulisan Coretan)
             if (kana.strokeSteps.isNotEmpty()) {
