@@ -162,10 +162,18 @@ fun MainAppScaffold() {
                     )
                 }
                 composable<Screen.Settings> {
-                    Text("Pengaturan Aplikasi")
+                    val viewModel: id.nihongodictionary.app.presentation.screens.settings.SettingsViewModel = hiltViewModel()
+                    id.nihongodictionary.app.presentation.screens.settings.SettingsScreen(
+                        viewModel = viewModel,
+                        onAboutClick = {
+                            navController.navigate(Screen.About)
+                        }
+                    )
                 }
                 composable<Screen.About> {
-                    Text("Tentang & Atribusi Lisensi")
+                    id.nihongodictionary.app.presentation.screens.settings.AboutScreen(
+                        onBackClick = { navController.popBackStack() }
+                    )
                 }
             }
         }
