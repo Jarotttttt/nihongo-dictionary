@@ -23,4 +23,10 @@ abstract class RepositoryModule {
     abstract fun bindKanjiRepository(
         impl: KanjiRepositoryImpl
     ): KanjiRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserDataRepository(
+        impl: id.nihongodictionary.app.data.repository.UserDataRepositoryImpl
+    ): id.nihongodictionary.app.domain.repository.UserDataRepository
 }

@@ -153,7 +153,13 @@ fun MainAppScaffold() {
                     )
                 }
                 composable<Screen.Saved> {
-                    Text("Kosakata Tersimpan")
+                    val viewModel: id.nihongodictionary.app.presentation.screens.saved.SavedViewModel = hiltViewModel()
+                    id.nihongodictionary.app.presentation.screens.saved.SavedVocabularyScreen(
+                        viewModel = viewModel,
+                        onWordClick = { wordId ->
+                            navController.navigate(Screen.WordDetail(wordId))
+                        }
+                    )
                 }
                 composable<Screen.Settings> {
                     Text("Pengaturan Aplikasi")
