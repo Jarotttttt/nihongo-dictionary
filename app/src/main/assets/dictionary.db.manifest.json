@@ -1,0 +1,10 @@
+{
+  "version_code": 1,
+  "version_name": "1.0.0",
+  "sha256": "be6096d592c12afaa8ddeab056afe0aed76e8b441d75f15b2c838cf02889b176",
+  "counts": {
+    "words": 10,
+    "kanji": 3,
+    "sentences": 5
+  }
+}

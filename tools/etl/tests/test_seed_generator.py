@@ -25,8 +25,8 @@ class TestSeedGenerator(unittest.TestCase):
         cursor.execute("PRAGMA integrity_check;")
         self.assertEqual(cursor.fetchone()[0].lower(), "ok")
         
-        # Verify FTS5 is populated
-        cursor.execute("SELECT COUNT(*) FROM fts_word_senses;")
+        # Verify word senses populated
+        cursor.execute("SELECT COUNT(*) FROM word_senses;")
         self.assertGreater(cursor.fetchone()[0], 0)
         conn.close()
 

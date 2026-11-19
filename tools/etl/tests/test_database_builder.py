@@ -48,17 +48,16 @@ class TestDatabaseBuilder(unittest.TestCase):
         self.assertEqual(row[1], "たべる")
         self.assertEqual(row[2], 1)
 
-        # Test FTS5 search for Indonesian gloss "makan"
+        # Test search for Indonesian gloss "makan"
         cursor.execute("""
             SELECT w.primary_spelling, s.gloss_id 
-            FROM fts_word_senses f
-            JOIN word_senses s ON f.rowid = s.id
+            FROM word_senses s
             JOIN words w ON s.word_id = w.id
-            WHERE fts_word_senses MATCH 'makan'
+            WHERE s.gloss_id LIKE '%makan%'
         """)
-        fts_result = cursor.fetchall()
-        self.assertEqual(len(fts_result), 1)
-        self.assertEqual(fts_result[0][0], "食べる")
+        search_result = cursor.fetchall()
+        self.assertEqual(len(search_result), 1)
+        self.assertEqual(search_result[0][0], "食べる")
 
     def test_insert_kanji_and_strokes(self):
         self.builder.create_schema()

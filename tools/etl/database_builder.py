@@ -92,38 +92,20 @@ CREATE TABLE IF NOT EXISTS word_kanji_crossref (
     PRIMARY KEY (word_id, kanji_id)
 );
 
--- 10. INDEX B-TREE UNTUK PREFIX & EXACT LOOKUP CEPAT
+-- 10. INDEX B-TREE UNTUK PREFIX & EXACT LOOKUP CEPAT (100% Android 10+ Compatible)
 CREATE INDEX IF NOT EXISTS idx_words_spelling ON words(primary_spelling);
 CREATE INDEX IF NOT EXISTS idx_words_reading ON words(primary_reading);
+CREATE INDEX IF NOT EXISTS idx_word_readings_word_id ON word_readings(word_id);
 CREATE INDEX IF NOT EXISTS idx_word_readings_hira ON word_readings(reading_hiragana);
 CREATE INDEX IF NOT EXISTS idx_word_readings_roma ON word_readings(reading_romaji);
+CREATE INDEX IF NOT EXISTS idx_word_senses_word_id ON word_senses(word_id);
+CREATE INDEX IF NOT EXISTS idx_word_senses_gloss ON word_senses(gloss_id);
 CREATE INDEX IF NOT EXISTS idx_kanji_char ON kanji(character);
+CREATE INDEX IF NOT EXISTS idx_kanji_readings_kanji_id ON kanji_readings(kanji_id);
 CREATE INDEX IF NOT EXISTS idx_kanji_readings_roma ON kanji_readings(reading_romaji);
-
--- 11. VIRTUAL TABLE FULL-TEXT SEARCH (FTS5)
-CREATE VIRTUAL TABLE IF NOT EXISTS fts_word_senses USING fts5(
-    gloss_id,
-    content='word_senses',
-    content_rowid='id',
-    tokenize='unicode61 remove_diacritics 2'
-);
-
--- Triggers to automatically populate FTS5 on insert
-CREATE TRIGGER IF NOT EXISTS trg_word_senses_insert AFTER INSERT ON word_senses BEGIN
-    INSERT INTO fts_word_senses(rowid, gloss_id) VALUES (new.id, new.gloss_id);
-END;
-
-CREATE VIRTUAL TABLE IF NOT EXISTS fts_sentences USING fts5(
-    japanese_text,
-    indonesian_text,
-    content='sentence_examples',
-    content_rowid='id',
-    tokenize='trigram'
-);
-
-CREATE TRIGGER IF NOT EXISTS trg_sentences_insert AFTER INSERT ON sentence_examples BEGIN
-    INSERT INTO fts_sentences(rowid, japanese_text, indonesian_text) VALUES (new.id, new.japanese_text, new.indonesian_text);
-END;
+CREATE INDEX IF NOT EXISTS idx_kanji_strokes_kanji_id ON kanji_strokes(kanji_id);
+CREATE INDEX IF NOT EXISTS idx_word_examples_word_id ON word_examples_crossref(word_id);
+CREATE INDEX IF NOT EXISTS idx_word_kanji_word_id ON word_kanji_crossref(word_id);
 """
 
 class DatabaseBuilder:

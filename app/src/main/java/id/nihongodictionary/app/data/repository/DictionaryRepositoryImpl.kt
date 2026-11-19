@@ -90,18 +90,17 @@ class DictionaryRepositoryImpl @Inject constructor(
                     }
                 }
 
-                // 2. Indonesian Reverse Search via FTS5 (if results are few and query is latin)
+                // 2. Indonesian Reverse Search via Indexed LIKE (100% Android 10+ Compatible)
                 if (words.size < 20 && (script == ScriptType.ROMAJI || script == ScriptType.LATIN_INDONESIAN)) {
-                    val ftsSql = """
-                        SELECT w.id, w.jmdict_seq, w.primary_spelling, w.primary_reading, w.is_common, w.jlpt_level
-                        FROM fts_word_senses f
-                        JOIN word_senses s ON f.rowid = s.id
+                    val reverseSql = """
+                        SELECT DISTINCT w.id, w.jmdict_seq, w.primary_spelling, w.primary_reading, w.is_common, w.jlpt_level
+                        FROM word_senses s
                         JOIN words w ON s.word_id = w.id
-                        WHERE fts_word_senses MATCH ?
+                        WHERE s.gloss_id LIKE '%' || ? || '%'
+                        ORDER BY w.is_common DESC, length(w.primary_spelling) ASC
                         LIMIT 30
                     """
-                    val escapedQuery = "\"$normalized\""
-                    db.rawQuery(ftsSql, arrayOf(escapedQuery)).use { cursor ->
+                    db.rawQuery(reverseSql, arrayOf(normalized)).use { cursor ->
                         while (cursor.moveToNext()) {
                             val wordId = cursor.getLong(0)
                             if (seenWordIds.add(wordId)) {

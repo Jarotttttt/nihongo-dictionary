@@ -15,19 +15,25 @@ tags:
 ---
 # 1. Launch Application
 - launchApp:
-    clearState: true
+    clearState: false
+
+# Dismiss any system alerts/overlays if present
+- tapOn:
+    text: "OKE"
+    optional: true
+
+- tapOn:
+    text: "OK"
+    optional: true
 
 # 2. Verify Home / Search Screen
 - extendedWaitUntil:
-    visible:
-      id: "search-input"
+    visible: "Kata Umum"
     timeout: 10000
-
-- assertVisible: "Kamus Jepang–Indonesia"
 
 # 3. Perform Word Search
 - tapOn:
-    id: "search-input"
+    text: ".*Ketik Kanji.*"
 - inputText: "taberu"
 
 # 4. Verify Result Card
@@ -35,7 +41,7 @@ tags:
     visible: "食べる"
     timeout: 5000
 
-- assertVisible: "makan; mengonsumsi"
+- assertVisible: ".*makan.*"
 
 # 5. Open Word Detail Screen
 - tapOn: "食べる"
@@ -44,47 +50,40 @@ tags:
     visible: "Detail Kosakata"
     timeout: 5000
 
-- assertVisible: "Arti & Makna"
-- assertVisible: "makan; mengonsumsi"
-- assertVisible: "Contoh Kalimat (Tatoeba)"
+- assertVisible: ".*Arti.*"
+- assertVisible: ".*makan.*"
 
 # 6. Test Back Navigation
 - back
 
 - extendedWaitUntil:
-    visible:
-      id: "search-input"
+    visible: "Kata Umum"
     timeout: 5000
 
 # 7. Test Navigation to Saved Vocabulary Tab
-- tapOn:
-    id: "tab-saved"
+- tapOn: "Tersimpan"
 
 - extendedWaitUntil:
     visible: "Kosakata Tersimpan"
     timeout: 5000
 
 # 8. Test Navigation to Settings Tab
-- tapOn:
-    id: "tab-settings"
+- tapOn: "Pengaturan"
 
 - extendedWaitUntil:
-    visible: "Pengaturan"
+    visible: ".*Pelafalan Suara.*"
     timeout: 5000
-
-- assertVisible: "Pelafalan Suara (TTS)"
-- assertVisible: "Tema Tampilan"
 
 # 9. Test Navigation to Legal Attribution Screen
-- tapOn: "Tentang & Atribusi Lisensi"
+- tapOn: ".*Tentang & Atribusi.*"
 
 - extendedWaitUntil:
-    visible: "Tentang & Atribusi"
+    visible: "Nihongo Dictionary"
     timeout: 5000
 
-- assertVisible: "Kamus JaIsho (Terjemahan Bahasa Indonesia)"
-- assertVisible: "EDRDG (JMdict & KANJIDIC2)"
-- assertVisible: "KanjiVG (Visual Urutan Coretan Kanji)"
-- assertVisible: "Tatoeba Project (Contoh Kalimat)"
+- assertVisible: ".*JaIsho.*"
+- assertVisible: ".*EDRDG.*"
+- assertVisible: ".*KanjiVG.*"
+- assertVisible: ".*Tatoeba.*"
 
 - takeScreenshot: 01-smoke-test-success

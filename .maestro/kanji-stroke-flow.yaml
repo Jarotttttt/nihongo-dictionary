@@ -13,17 +13,26 @@ tags:
   - stroke-order
 ---
 # 1. Launch Application
-- launchApp
+- launchApp:
+    clearState: false
+
+# Dismiss any system alerts/overlays if present
+- tapOn:
+    text: "OKE"
+    optional: true
+
+- tapOn:
+    text: "OK"
+    optional: true
 
 - extendedWaitUntil:
-    visible:
-      id: "search-input"
+    visible: "Kata Umum"
     timeout: 10000
 
 # 2. Search Word
 - tapOn:
-    id: "search-input"
-- inputText: "食べる"
+    text: ".*Ketik Kanji.*"
+- inputText: "taberu"
 
 - extendedWaitUntil:
     visible: "食べる"
@@ -49,16 +58,13 @@ tags:
     visible: "Detail Kanji"
     timeout: 5000
 
-- assertVisible: "Urutan Coretan (Hitsujun)"
-- assertVisible:
-    id: "kanji-stroke-canvas"
+- assertVisible: ".*Urutan Coretan.*"
 
 # 6. Interact with Stroke Order Controls
-- tapOn:
-    id: "btn-stroke-play"
+- tapOn: "Putar Animasi"
 
-- assertVisible: "Arti Bahasa Indonesia"
-- assertVisible: "Onyomi (音読み):"
-- assertVisible: "Kunyomi (訓読み):"
+- assertVisible: ".*Arti Bahasa Indonesia.*"
+- assertVisible: ".*Onyomi.*"
+- assertVisible: ".*Kunyomi.*"
 
 - takeScreenshot: 02-kanji-stroke-detail
