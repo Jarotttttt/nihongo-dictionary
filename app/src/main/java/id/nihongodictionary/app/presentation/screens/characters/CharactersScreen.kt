@@ -15,22 +15,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -55,11 +61,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import id.nihongodictionary.app.domain.model.KanaCategory
 import id.nihongodictionary.app.domain.model.KanaCharacter
 import id.nihongodictionary.app.domain.model.KanaData
+import id.nihongodictionary.app.domain.model.KanaWord
 import id.nihongodictionary.app.domain.model.KanjiFilterCategory
 import id.nihongodictionary.app.domain.model.KanjiGridItem
 import id.nihongodictionary.app.domain.model.RadicalData
@@ -160,7 +166,7 @@ fun CharactersScreen(
                             .padding(horizontal = 16.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(KanjiFilterCategory.values()) { filter ->
+                        items(KanjiFilterCategory.entries) { filter ->
                             FilterChip(
                                 selected = selectedKanjiFilter == filter,
                                 onClick = { viewModel.selectKanjiFilter(filter) },
@@ -261,13 +267,13 @@ fun CharactersScreen(
         }
     }
 
-    // Modal Dialog for Kana Detail
+    // Modal BottomSheet for Kana Detail
     detailKana?.let { kana ->
         if (kana.character.isNotEmpty()) {
-            KanaDetailDialog(
+            KanaDetailBottomSheet(
                 kana = kana,
                 onDismiss = { detailKana = null },
-                onPlayAudio = { viewModel.playAudio(kana.character) }
+                onPlayAudio = { viewModel.playAudio(it) }
             )
         }
     }
@@ -461,86 +467,207 @@ fun KanjiCard(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun KanaDetailDialog(
+fun KanaDetailBottomSheet(
     kana: KanaCharacter,
     onDismiss: () -> Unit,
-    onPlayAudio: () -> Unit
+    onPlayAudio: (String) -> Unit
 ) {
-    Dialog(onDismissRequest = onDismiss) {
-        OutlinedCard(
-            shape = MaterialTheme.shapes.large,
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        shape = MaterialTheme.shapes.extraLarge,
+        containerColor = MaterialTheme.colorScheme.surface
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f))
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 32.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = kana.character,
-                    style = MaterialTheme.typography.displayMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Romaji: ${kana.romaji}",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+            // 1. Header: Big Character, Romaji, Badges
+            Text(
+                text = kana.character,
+                style = MaterialTheme.typography.displayLarge,
+                fontSize = 56.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
 
-                if (kana.exampleWord.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Surface(
-                        shape = MaterialTheme.shapes.small,
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Pelafalan: \"${kana.romaji}\"",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Surface(
+                    shape = MaterialTheme.shapes.small,
+                    color = MaterialTheme.colorScheme.secondaryContainer
+                ) {
+                    Text(
+                        text = "${kana.strokeCount} Coretan",
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+
+                Surface(
+                    shape = MaterialTheme.shapes.small,
+                    color = MaterialTheme.colorScheme.tertiaryContainer
+                ) {
+                    Text(
+                        text = when (kana.category) {
+                            KanaCategory.GOJUON -> "Huruf Dasar"
+                            KanaCategory.DAKUON -> "Bunyi Turunan (Dakuon)"
+                            KanaCategory.YOON -> "Bunyi Gabungan (Yōon)"
+                        },
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Main Audio Button
+            FilledTonalButton(
+                onClick = { onPlayAudio(kana.character) },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Dengarkan Suara Huruf (${kana.character})", fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // 2. Stroke Order Section (Urutan Penulisan Coretan)
+            if (kana.strokeSteps.isNotEmpty()) {
+                OutlinedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Contoh Kata:",
-                                style = MaterialTheme.typography.labelMedium,
+                                text = "Urutan Penulisan (Hitsujun)",
+                                style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary
                             )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = kana.exampleWord,
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Text(
-                                text = "Artinya: ${kana.exampleMeaning}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        kana.strokeSteps.forEachIndexed { index, step ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                verticalAlignment = Alignment.Top
+                            ) {
+                                Surface(
+                                    shape = MaterialTheme.shapes.extraSmall,
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    modifier = Modifier.size(22.dp)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Text(
+                                            text = "${index + 1}",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Bold,
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = step,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
                         }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
+            }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    TextButton(onClick = onDismiss) {
-                        Text("Tutup")
-                    }
-                    TextButton(onClick = onPlayAudio) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.VolumeUp,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.size(4.dp))
-                        Text("Putar Audio")
+            // 3. Related Vocabulary Section (Penyusunan Kosakata)
+            if (kana.relatedWords.isNotEmpty()) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "Kosakata Penyusun (${kana.relatedWords.size} Contoh Kata)",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    kana.relatedWords.forEach { word ->
+                        ElevatedCard(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            shape = MaterialTheme.shapes.medium
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(14.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = word.japanese,
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                    Text(
+                                        text = "${word.romaji} • ${word.meaning}",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+
+                                IconButton(
+                                    onClick = { onPlayAudio(word.japanese) },
+                                    modifier = Modifier.size(36.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.VolumeUp,
+                                        contentDescription = "Dengarkan Kata",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
