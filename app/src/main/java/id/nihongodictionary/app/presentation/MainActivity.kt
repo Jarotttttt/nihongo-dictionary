@@ -148,7 +148,8 @@ fun MainAppScaffold() {
                         onBackClick = { navController.popBackStack() },
                         onKanjiClick = { kanjiId ->
                             navController.navigate(Screen.KanjiDetail(kanjiId))
-                        }
+                        },
+                        onPlayAudio = viewModel::playAudio
                     )
                 }
                 composable<Screen.KanjiDetail> { backStackEntry ->

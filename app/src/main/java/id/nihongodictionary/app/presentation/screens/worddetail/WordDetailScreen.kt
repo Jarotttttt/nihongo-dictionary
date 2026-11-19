@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.CardDefaults
@@ -30,12 +31,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -51,16 +55,25 @@ fun WordDetailScreen(
     viewModel: WordDetailViewModel,
     onBackClick: () -> Unit,
     onKanjiClick: (Long) -> Unit,
-    onPlayAudio: (String) -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onPlayAudio: (String) -> Unit = viewModel::playAudio
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isBookmarked by viewModel.isBookmarked.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(wordId) {
         viewModel.loadWordDetail(wordId)
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.userFeedback.collect { message ->
+            snackbarHostState.showSnackbar(message)
+        }
+    }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text("Detail Kosakata") },
@@ -71,10 +84,14 @@ fun WordDetailScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = { /* Toggle bookmark */ },
+                        onClick = viewModel::toggleBookmark,
                         modifier = Modifier.testTag("btn-bookmark")
                     ) {
-                        Icon(Icons.Default.BookmarkBorder, contentDescription = "Simpan")
+                        Icon(
+                            imageVector = if (isBookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                            contentDescription = if (isBookmarked) "Hapus dari Tersimpan" else "Simpan ke Tersimpan",
+                            tint = if (isBookmarked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             )

@@ -1,0 +1,80 @@
+# Test Bookmark & Audio Playback Flow
+appId: id.nihongodictionary.app.debug
+tags:
+  - bookmark
+  - audio
+---
+# 1. Launch Application
+- launchApp:
+    clearState: false
+
+# Dismiss Infinix overlay if present
+- tapOn:
+    text: "OKE"
+    optional: true
+
+- tapOn:
+    text: "OK"
+    optional: true
+
+- extendedWaitUntil:
+    visible: "Kata Umum"
+    timeout: 10000
+
+# 2. Search for Word
+- tapOn:
+    text: ".*Ketik Kanji.*"
+- inputText: "taberu"
+
+- extendedWaitUntil:
+    visible: "食べる"
+    timeout: 5000
+
+# 3. Open Word Detail
+- tapOn: "食べる"
+
+- extendedWaitUntil:
+    visible: "Detail Kosakata"
+    timeout: 5000
+
+# 4. Test Play Audio (TTS)
+- tapOn: "Dengarkan Pelafalan"
+
+# 5. Test Bookmark (Save word)
+- tapOn: ".*Simpan.*"
+
+- extendedWaitUntil:
+    visible: ".*Tersimpan.*"
+    timeout: 4000
+
+# 6. Verify Word in "Tersimpan" Tab
+- back
+- extendedWaitUntil:
+    visible: "Kata Umum"
+    timeout: 5000
+
+- tapOn: "Tersimpan"
+
+- extendedWaitUntil:
+    visible: "食べる"
+    timeout: 5000
+
+- assertVisible: "食べる"
+- assertVisible: ".*makan.*"
+
+# 7. Open Word from Saved list and Unbookmark
+- tapOn: "食べる"
+
+- extendedWaitUntil:
+    visible: "Detail Kosakata"
+    timeout: 5000
+
+- tapOn: ".*Hapus.*"
+
+- back
+
+- extendedWaitUntil:
+    visible: "Belum Ada Kosakata Tersimpan"
+    timeout: 5000
+
+- takeScreenshot: 03-bookmark-and-audio-verified
