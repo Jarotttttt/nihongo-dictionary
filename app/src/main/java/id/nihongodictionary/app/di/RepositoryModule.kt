@@ -5,7 +5,11 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import id.nihongodictionary.app.data.repository.DictionaryRepositoryImpl
+import id.nihongodictionary.app.data.repository.KanjiRepositoryImpl
+import id.nihongodictionary.app.data.repository.UserDataRepositoryImpl
 import id.nihongodictionary.app.domain.repository.DictionaryRepository
+import id.nihongodictionary.app.domain.repository.KanjiRepository
+import id.nihongodictionary.app.domain.repository.UserDataRepository
 import javax.inject.Singleton
 
 @Module
@@ -27,6 +31,6 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindUserDataRepository(
-        impl: id.nihongodictionary.app.data.repository.UserDataRepositoryImpl
-    ): id.nihongodictionary.app.domain.repository.UserDataRepository
+        impl: UserDataRepositoryImpl
+    ): UserDataRepository
 }

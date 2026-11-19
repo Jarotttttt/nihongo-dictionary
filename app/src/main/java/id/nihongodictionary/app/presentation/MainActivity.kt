@@ -33,8 +33,15 @@ import androidx.navigation.toRoute
 import dagger.hilt.android.AndroidEntryPoint
 import id.nihongodictionary.app.presentation.designsystem.NihongoDictionaryTheme
 import id.nihongodictionary.app.presentation.navigation.Screen
+import id.nihongodictionary.app.presentation.screens.kanji.KanjiDetailScreen
+import id.nihongodictionary.app.presentation.screens.kanji.KanjiDetailViewModel
+import id.nihongodictionary.app.presentation.screens.saved.SavedVocabularyScreen
+import id.nihongodictionary.app.presentation.screens.saved.SavedViewModel
 import id.nihongodictionary.app.presentation.screens.search.SearchScreen
 import id.nihongodictionary.app.presentation.screens.search.SearchViewModel
+import id.nihongodictionary.app.presentation.screens.settings.AboutScreen
+import id.nihongodictionary.app.presentation.screens.settings.SettingsScreen
+import id.nihongodictionary.app.presentation.screens.settings.SettingsViewModel
 import id.nihongodictionary.app.presentation.screens.worddetail.WordDetailScreen
 import id.nihongodictionary.app.presentation.screens.worddetail.WordDetailViewModel
 
@@ -146,8 +153,8 @@ fun MainAppScaffold() {
                 }
                 composable<Screen.KanjiDetail> { backStackEntry ->
                     val route: Screen.KanjiDetail = backStackEntry.toRoute()
-                    val viewModel: id.nihongodictionary.app.presentation.screens.kanji.KanjiDetailViewModel = hiltViewModel()
-                    id.nihongodictionary.app.presentation.screens.kanji.KanjiDetailScreen(
+                    val viewModel: KanjiDetailViewModel = hiltViewModel()
+                    KanjiDetailScreen(
                         kanjiId = route.kanjiId,
                         viewModel = viewModel,
                         onBackClick = { navController.popBackStack() },
@@ -157,8 +164,8 @@ fun MainAppScaffold() {
                     )
                 }
                 composable<Screen.Saved> {
-                    val viewModel: id.nihongodictionary.app.presentation.screens.saved.SavedViewModel = hiltViewModel()
-                    id.nihongodictionary.app.presentation.screens.saved.SavedVocabularyScreen(
+                    val viewModel: SavedViewModel = hiltViewModel()
+                    SavedVocabularyScreen(
                         viewModel = viewModel,
                         onWordClick = { wordId ->
                             navController.navigate(Screen.WordDetail(wordId))
@@ -166,8 +173,8 @@ fun MainAppScaffold() {
                     )
                 }
                 composable<Screen.Settings> {
-                    val viewModel: id.nihongodictionary.app.presentation.screens.settings.SettingsViewModel = hiltViewModel()
-                    id.nihongodictionary.app.presentation.screens.settings.SettingsScreen(
+                    val viewModel: SettingsViewModel = hiltViewModel()
+                    SettingsScreen(
                         viewModel = viewModel,
                         onAboutClick = {
                             navController.navigate(Screen.About)
@@ -175,7 +182,7 @@ fun MainAppScaffold() {
                     )
                 }
                 composable<Screen.About> {
-                    id.nihongodictionary.app.presentation.screens.settings.AboutScreen(
+                    AboutScreen(
                         onBackClick = { navController.popBackStack() }
                     )
                 }
