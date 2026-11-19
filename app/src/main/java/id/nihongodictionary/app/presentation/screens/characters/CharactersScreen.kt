@@ -206,7 +206,6 @@ fun CharactersScreen(
                         KanaGrid(
                             items = kanaList,
                             columns = columns,
-                            onPlayAudio = { viewModel.playAudio(it.character) },
                             onItemClick = { onKanaClick(it.character) }
                         )
                     }
@@ -220,7 +219,6 @@ fun CharactersScreen(
                         KanaGrid(
                             items = kanaList,
                             columns = columns,
-                            onPlayAudio = { viewModel.playAudio(it.character) },
                             onItemClick = { onKanaClick(it.character) }
                         )
                     }
@@ -273,7 +271,6 @@ fun CharactersScreen(
 fun KanaGrid(
     items: List<KanaCharacter>,
     columns: Int,
-    onPlayAudio: (KanaCharacter) -> Unit,
     onItemClick: (KanaCharacter) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -300,7 +297,6 @@ fun KanaGrid(
                 KanaCard(
                     kana = item,
                     onClick = {
-                        onPlayAudio(item)
                         onItemClick(item)
                     }
                 )

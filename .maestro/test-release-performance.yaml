@@ -4,8 +4,8 @@
 # - Launch release build (R8 optimized, minified)
 # - Search tab smoothness
 # - Aksara tab fast switching between Hiragana, Katakana, Kanji, and Radicals
-# - Kana Detail fullscreen navigation and back
-# - Kanji Detail navigation and back
+# - Kana Detail fullscreen navigation without auto-tts (matching Kanji layout)
+# - Practice controls
 # - Settings and About verification
 
 appId: id.nihongodictionary.app
@@ -81,7 +81,7 @@ tags:
     visible: ".*Ninben.*"
     timeout: 2000
 
-# 4. Open Kana Fullscreen Detail & Practice
+# 4. Open Kana Detail (No Auto TTS, Layout matches Kanji)
 - tapOn: ".*Hiragana.*"
 - tapOn: "あ"
 
@@ -91,6 +91,8 @@ tags:
 
 - assertVisible: "Detail Hiragana"
 - assertVisible: ".*Urutan Coretan & Latihan Tulis.*"
+- assertVisible: "Animasi Urutan"
+- assertVisible: "Latihan Tulis"
 
 # Switch mode to Latihan Tulis
 - tapOn: "Latihan Tulis"
@@ -102,6 +104,14 @@ tags:
     timeout: 3000
 
 - assertVisible: ".*Coretan kamu: 0 / 3.*"
+
+# Verify Pelafalan Card below canvas (mirroring Kanji layout)
+- scrollUntilVisible:
+    element: ".*Pelafalan & Karakter.*"
+    direction: DOWN
+    timeout: 3000
+
+- assertVisible: ".*Pelafalan & Karakter.*"
 
 # Back to Aksara list
 - tapOn: "Kembali"
@@ -129,4 +139,4 @@ tags:
     timeout: 3000
 
 - assertVisible: "Author: Xyuraa"
-- takeScreenshot: 04-release-performance-success
+- takeScreenshot: 05-release-kanji-matched-layout
