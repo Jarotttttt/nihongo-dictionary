@@ -1,10 +1,12 @@
 {
-  "version_code": 1,
-  "version_name": "1.0.0",
-  "sha256": "be6096d592c12afaa8ddeab056afe0aed76e8b441d75f15b2c838cf02889b176",
+  "version_code": 2,
+  "version_name": "2.0.0-full",
+  "sha256": "740c5e4bbd4bd8742678ed65194d5e087d5dbdcf6d9ad549bce959592fecf472",
+  "file_size_mb": 157.94,
   "counts": {
-    "words": 10,
-    "kanji": 3,
-    "sentences": 5
-  }
+    "words": 323601,
+    "kanji": 13108,
+    "kanji_with_strokes": 6703
+  },
+  "build_time_seconds": 10.78
 }
