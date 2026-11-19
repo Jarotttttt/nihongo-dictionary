@@ -28,8 +28,7 @@ venv/
 htmlcov/
 
 # Raw dataset archives and downloaded dumps (prevent committing multi-hundred MB files)
-tools/etl/data/raw/
-tools/etl/data/interim/
+tools/etl/data/
 *.gz
 *.tar.bz2
 *.zip
