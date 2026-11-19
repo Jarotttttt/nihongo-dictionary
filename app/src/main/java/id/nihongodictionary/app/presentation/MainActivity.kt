@@ -142,7 +142,15 @@ fun MainAppScaffold() {
                 }
                 composable<Screen.KanjiDetail> { backStackEntry ->
                     val route: Screen.KanjiDetail = backStackEntry.toRoute()
-                    Text("Detail Kanji ID: ${route.kanjiId}")
+                    val viewModel: id.nihongodictionary.app.presentation.screens.kanji.KanjiDetailViewModel = hiltViewModel()
+                    id.nihongodictionary.app.presentation.screens.kanji.KanjiDetailScreen(
+                        kanjiId = route.kanjiId,
+                        viewModel = viewModel,
+                        onBackClick = { navController.popBackStack() },
+                        onWordClick = { wordId ->
+                            navController.navigate(Screen.WordDetail(wordId))
+                        }
+                    )
                 }
                 composable<Screen.Saved> {
                     Text("Kosakata Tersimpan")

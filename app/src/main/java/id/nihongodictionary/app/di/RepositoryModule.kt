@@ -17,4 +17,10 @@ abstract class RepositoryModule {
     abstract fun bindDictionaryRepository(
         impl: DictionaryRepositoryImpl
     ): DictionaryRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindKanjiRepository(
+        impl: KanjiRepositoryImpl
+    ): KanjiRepository
 }
