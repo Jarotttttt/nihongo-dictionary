@@ -42,6 +42,8 @@ import id.nihongodictionary.app.presentation.screens.search.SearchViewModel
 import id.nihongodictionary.app.presentation.screens.settings.AboutScreen
 import id.nihongodictionary.app.presentation.screens.settings.SettingsScreen
 import id.nihongodictionary.app.presentation.screens.settings.SettingsViewModel
+import id.nihongodictionary.app.presentation.screens.splash.SplashScreen
+import id.nihongodictionary.app.presentation.screens.splash.SplashViewModel
 import id.nihongodictionary.app.presentation.screens.worddetail.WordDetailScreen
 import id.nihongodictionary.app.presentation.screens.worddetail.WordDetailViewModel
 
@@ -63,73 +65,89 @@ fun MainAppScaffold() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val showBottomBar = currentRoute?.contains("Search") == true ||
+            currentRoute?.contains("Saved") == true ||
+            currentRoute?.contains("Settings") == true
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    modifier = Modifier.testTag("tab-kamus"),
-                    selected = currentRoute?.contains("Search") == true,
-                    onClick = {
-                        navController.navigate(Screen.Search) {
-                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = if (currentRoute?.contains("Search") == true) Icons.Filled.Search else Icons.Outlined.Search,
-                            contentDescription = "Pencarian"
-                        )
-                    },
-                    label = { Text("Kamus") }
-                )
-                NavigationBarItem(
-                    modifier = Modifier.testTag("tab-saved"),
-                    selected = currentRoute?.contains("Saved") == true,
-                    onClick = {
-                        navController.navigate(Screen.Saved) {
-                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = if (currentRoute?.contains("Saved") == true) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
-                            contentDescription = "Tersimpan"
-                        )
-                    },
-                    label = { Text("Tersimpan") }
-                )
-                NavigationBarItem(
-                    modifier = Modifier.testTag("tab-settings"),
-                    selected = currentRoute?.contains("Settings") == true,
-                    onClick = {
-                        navController.navigate(Screen.Settings) {
-                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = if (currentRoute?.contains("Settings") == true) Icons.Filled.Settings else Icons.Outlined.Settings,
-                            contentDescription = "Pengaturan"
-                        )
-                    },
-                    label = { Text("Pengaturan") }
-                )
+            if (showBottomBar) {
+                NavigationBar {
+                    NavigationBarItem(
+                        modifier = Modifier.testTag("tab-kamus"),
+                        selected = currentRoute?.contains("Search") == true,
+                        onClick = {
+                            navController.navigate(Screen.Search) {
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = if (currentRoute?.contains("Search") == true) Icons.Filled.Search else Icons.Outlined.Search,
+                                contentDescription = "Pencarian"
+                            )
+                        },
+                        label = { Text("Kamus") }
+                    )
+                    NavigationBarItem(
+                        modifier = Modifier.testTag("tab-saved"),
+                        selected = currentRoute?.contains("Saved") == true,
+                        onClick = {
+                            navController.navigate(Screen.Saved) {
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = if (currentRoute?.contains("Saved") == true) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
+                                contentDescription = "Tersimpan"
+                            )
+                        },
+                        label = { Text("Tersimpan") }
+                    )
+                    NavigationBarItem(
+                        modifier = Modifier.testTag("tab-settings"),
+                        selected = currentRoute?.contains("Settings") == true,
+                        onClick = {
+                            navController.navigate(Screen.Settings) {
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = if (currentRoute?.contains("Settings") == true) Icons.Filled.Settings else Icons.Outlined.Settings,
+                                contentDescription = "Pengaturan"
+                            )
+                        },
+                        label = { Text("Pengaturan") }
+                    )
+                }
             }
         }
     ) { innerPadding ->
         Surface(modifier = Modifier.padding(innerPadding)) {
             NavHost(
                 navController = navController,
-                startDestination = Screen.Search
+                startDestination = Screen.Splash
             ) {
+                composable<Screen.Splash> {
+                    val viewModel: SplashViewModel = hiltViewModel()
+                    SplashScreen(
+                        viewModel = viewModel,
+                        onSplashFinished = {
+                            navController.navigate(Screen.Search) {
+                                popUpTo<Screen.Splash> { inclusive = true }
+                            }
+                        }
+                    )
+                }
                 composable<Screen.Search> {
                     val viewModel: SearchViewModel = hiltViewModel()
                     SearchScreen(
