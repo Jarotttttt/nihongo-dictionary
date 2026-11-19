@@ -1,0 +1,116 @@
+# Nihongo Dictionary E2E Characters Fullscreen & Stroke Practice Test
+#
+# Validates:
+# - Navigation to Aksara tab
+# - Opening Hiragana 'あ' into full-screen Detail Hiragana (not bottom sheet!)
+# - Header, Romaji, Audio button, and Badges
+# - Interactive Canvas (Animation & Practice mode toggle)
+# - Practice controls (Undo, Ghost Guide, Clear)
+# - Writing steps and Related Vocabulary
+# - Return navigation back to Aksara tab
+# - Opening Katakana 'ア' into full-screen Detail Katakana
+# - Final return navigation
+
+appId: id.nihongodictionary.app.debug
+tags:
+  - characters
+  - practice
+  - kana
+---
+# 1. Launch Application
+- launchApp:
+    clearState: false
+
+# Dismiss any system dialogs if present
+- tapOn:
+    text: "OKE"
+    optional: true
+
+- tapOn:
+    text: "OK"
+    optional: true
+
+# 2. Navigate to Aksara Tab
+- tapOn: "Aksara"
+
+- extendedWaitUntil:
+    visible: ".*Hiragana.*"
+    timeout: 5000
+
+# 3. Open Hiragana 'あ' Fullscreen Detail
+- tapOn: "あ"
+
+- extendedWaitUntil:
+    visible: "Detail Hiragana"
+    timeout: 5000
+
+# Verify Fullscreen TopBar and Content
+- assertVisible: "Detail Hiragana"
+- assertVisible: ".*Pelafalan.*a.*"
+- assertVisible: ".*3 Coretan.*"
+- assertVisible: ".*Dengarkan Suara Huruf.*"
+- assertVisible: ".*Urutan Coretan & Latihan Tulis.*"
+- assertVisible: "Animasi Urutan"
+- assertVisible: "Latihan Tulis"
+
+# 4. Switch to Latihan Tulis (Practice Mode)
+- tapOn: "Latihan Tulis"
+
+- scrollUntilVisible:
+    element: ".*Tulis dengan jarimu.*"
+    direction: DOWN
+    timeout: 5000
+
+- assertVisible: ".*Coretan kamu: 0 / 3.*"
+- assertVisible: ".*Tulis dengan jarimu.*"
+
+# Toggle Ghost Guide (content-description)
+- tapOn: ".*Sembunyikan Panduan Bayangan.*"
+- tapOn: ".*Tampilkan Panduan Bayangan.*"
+
+# Switch back to Animasi Urutan
+- tapOn: "Animasi Urutan"
+- tapOn: "Putar Animasi"
+
+# 5. Verify Related Vocabulary
+- scrollUntilVisible:
+    element: ".*Contoh Kosakata.*"
+    direction: DOWN
+    timeout: 5000
+
+- assertVisible: ".*Contoh Kosakata.*"
+
+# 6. Navigate Back to Aksara List
+- tapOn: "Kembali"
+
+- extendedWaitUntil:
+    visible: ".*Hiragana.*"
+    timeout: 5000
+
+# 7. Test Katakana Fullscreen Detail
+- tapOn: ".*Katakana.*"
+
+- extendedWaitUntil:
+    visible: "ア"
+    timeout: 5000
+
+- tapOn: "ア"
+
+- extendedWaitUntil:
+    visible: "Detail Katakana"
+    timeout: 5000
+
+- assertVisible: "Detail Katakana"
+- assertVisible: ".*Pelafalan.*a.*"
+- assertVisible: ".*2 Coretan.*"
+- assertVisible: ".*Urutan Coretan & Latihan Tulis.*"
+
+# Take Screenshot of Fullscreen Katakana Detail
+- takeScreenshot: 03-kana-practice-fullscreen
+
+# 8. Navigate Back
+- tapOn: "Kembali"
+
+- extendedWaitUntil:
+    visible: ".*Katakana.*"
+    timeout: 5000

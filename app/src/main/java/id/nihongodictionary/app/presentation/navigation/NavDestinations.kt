@@ -16,6 +16,9 @@ sealed interface Screen {
     data class KanjiDetail(val kanjiId: Long) : Screen
 
     @Serializable
+    data class KanaDetail(val character: String) : Screen
+
+    @Serializable
     data object Saved : Screen
 
     @Serializable

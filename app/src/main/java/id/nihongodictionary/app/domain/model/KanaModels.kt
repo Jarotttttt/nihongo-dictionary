@@ -1930,4 +1930,13 @@ object KanaData {
             relatedWords = listOf(KanaWord("ピョ", "pyo", "pyo"))
         ),
     )
+
+    val ALL_KANA: List<KanaCharacter> by lazy {
+        HIRAGANA_GOJUON + HIRAGANA_DAKUON + HIRAGANA_YOON +
+        KATAKANA_GOJUON + KATAKANA_DAKUON + KATAKANA_YOON
+    }
+
+    fun findKana(character: String): KanaCharacter? {
+        return ALL_KANA.firstOrNull { it.character == character }
+    }
 }

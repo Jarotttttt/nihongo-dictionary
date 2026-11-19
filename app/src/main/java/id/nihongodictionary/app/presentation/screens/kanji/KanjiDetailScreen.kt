@@ -129,7 +129,7 @@ fun KanjiDetailContent(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Urutan Coretan (Hitsujun)",
+                            text = "Urutan Coretan & Latihan Tulis",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.primary

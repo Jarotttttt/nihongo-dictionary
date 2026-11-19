@@ -24,8 +24,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -38,6 +41,7 @@ import id.nihongodictionary.app.presentation.designsystem.NihongoDictionaryTheme
 import id.nihongodictionary.app.presentation.navigation.Screen
 import id.nihongodictionary.app.presentation.screens.characters.CharactersScreen
 import id.nihongodictionary.app.presentation.screens.characters.CharactersViewModel
+import id.nihongodictionary.app.presentation.screens.characters.KanaDetailScreen
 import id.nihongodictionary.app.presentation.screens.kanji.KanjiDetailScreen
 import id.nihongodictionary.app.presentation.screens.kanji.KanjiDetailViewModel
 import id.nihongodictionary.app.presentation.screens.saved.SavedVocabularyScreen
@@ -64,6 +68,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MainAppScaffold() {
     val navController = rememberNavController()
@@ -71,7 +76,9 @@ fun MainAppScaffold() {
     val currentRoute = navBackStackEntry?.destination?.route
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .semantics { testTagsAsResourceId = true },
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(
@@ -169,7 +176,19 @@ fun MainAppScaffold() {
                         viewModel = viewModel,
                         onKanjiClick = { kanjiId ->
                             navController.navigate(Screen.KanjiDetail(kanjiId))
+                        },
+                        onKanaClick = { character ->
+                            navController.navigate(Screen.KanaDetail(character))
                         }
+                    )
+                }
+                composable<Screen.KanaDetail> { backStackEntry ->
+                    val route: Screen.KanaDetail = backStackEntry.toRoute()
+                    val viewModel: CharactersViewModel = hiltViewModel()
+                    KanaDetailScreen(
+                        character = route.character,
+                        viewModel = viewModel,
+                        onBackClick = { navController.popBackStack() }
                     )
                 }
                 composable<Screen.WordDetail> { backStackEntry ->
