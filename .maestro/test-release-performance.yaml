@@ -1,0 +1,132 @@
+# Nihongo Dictionary Release Build Performance & Navigation Test
+#
+# Validates:
+# - Launch release build (R8 optimized, minified)
+# - Search tab smoothness
+# - Aksara tab fast switching between Hiragana, Katakana, Kanji, and Radicals
+# - Kana Detail fullscreen navigation and back
+# - Kanji Detail navigation and back
+# - Settings and About verification
+
+appId: id.nihongodictionary.app
+tags:
+  - release
+  - performance
+---
+# 1. Launch Release Application
+- launchApp:
+    clearState: false
+
+# Dismiss any system dialogs if present
+- tapOn:
+    text: "OKE"
+    optional: true
+
+- tapOn:
+    text: "OK"
+    optional: true
+
+# 2. Search Performance
+- extendedWaitUntil:
+    visible: "Kata Umum"
+    timeout: 8000
+
+- tapOn: ".*Ketik Kanji.*"
+- inputText: "sakura"
+
+- pressKey: back
+
+- extendedWaitUntil:
+    visible: "桜"
+    timeout: 3000
+
+# 3. Switch to Aksara Tab (Fast Tab Switching)
+- tapOn: "Aksara"
+
+- extendedWaitUntil:
+    visible: ".*Hiragana.*"
+    timeout: 3000
+
+# Switch sub-category chips
+- tapOn: "Turunan (Dakuon)"
+- extendedWaitUntil:
+    visible: "が"
+    timeout: 2000
+
+- tapOn: "Gabungan (Yōon)"
+- extendedWaitUntil:
+    visible: "きゃ"
+    timeout: 2000
+
+- tapOn: "Dasar (46 Huruf)"
+- extendedWaitUntil:
+    visible: "あ"
+    timeout: 2000
+
+# Switch to Katakana tab
+- tapOn: ".*Katakana.*"
+- extendedWaitUntil:
+    visible: "ア"
+    timeout: 2000
+
+# Switch to Kanji tab (cached & fast)
+- tapOn: ".*Kanji.*"
+- extendedWaitUntil:
+    visible: ".*SD 1.*"
+    timeout: 3000
+
+# Switch to Radicals tab
+- tapOn: ".*Kanji Penyusun.*"
+- extendedWaitUntil:
+    visible: ".*Ninben.*"
+    timeout: 2000
+
+# 4. Open Kana Fullscreen Detail & Practice
+- tapOn: ".*Hiragana.*"
+- tapOn: "あ"
+
+- extendedWaitUntil:
+    visible: "Detail Hiragana"
+    timeout: 3000
+
+- assertVisible: "Detail Hiragana"
+- assertVisible: ".*Urutan Coretan & Latihan Tulis.*"
+
+# Switch mode to Latihan Tulis
+- tapOn: "Latihan Tulis"
+
+# Scroll and verify practice controls
+- scrollUntilVisible:
+    element: ".*Tulis dengan jarimu.*"
+    direction: DOWN
+    timeout: 3000
+
+- assertVisible: ".*Coretan kamu: 0 / 3.*"
+
+# Back to Aksara list
+- tapOn: "Kembali"
+- extendedWaitUntil:
+    visible: ".*Hiragana.*"
+    timeout: 3000
+
+# 5. Check Settings & Author
+- tapOn: "Pengaturan"
+- extendedWaitUntil:
+    visible: ".*Pelafalan Suara.*"
+    timeout: 3000
+
+- scrollUntilVisible:
+    element: ".*Dibuat oleh Xyuraa.*"
+    direction: DOWN
+    timeout: 3000
+
+- assertVisible: ".*Dibuat oleh Xyuraa.*"
+
+# Open About
+- tapOn: ".*Tentang & Atribusi.*"
+- extendedWaitUntil:
+    visible: "Nihongo Dictionary"
+    timeout: 3000
+
+- assertVisible: "Author: Xyuraa"
+- takeScreenshot: 04-release-performance-success

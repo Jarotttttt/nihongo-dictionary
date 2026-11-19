@@ -284,7 +284,12 @@ fun KanaGrid(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(vertical = 8.dp)
     ) {
-        items(items) { item ->
+        items(
+            count = items.size,
+            key = { index -> items[index].character.ifEmpty { "empty_$index" } },
+            contentType = { index -> if (items[index].character.isEmpty()) "empty" else "kana" }
+        ) { index ->
+            val item = items[index]
             if (item.character.isEmpty()) {
                 Box(
                     modifier = Modifier
@@ -359,7 +364,7 @@ fun KanjiGrid(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(vertical = 8.dp)
     ) {
-        items(kanjiList, key = { it.id }) { kanji ->
+        items(kanjiList, key = { it.id }, contentType = { "kanji" }) { kanji ->
             KanjiCard(
                 kanji = kanji,
                 onClick = { onKanjiClick(kanji.id) },
@@ -471,7 +476,7 @@ fun RadicalList(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(vertical = 8.dp)
     ) {
-        items(items) { radical ->
+        items(items, key = { it.character }, contentType = { "radical" }) { radical ->
             RadicalCard(
                 radical = radical,
                 onPlayAudio = { onPlayAudio(radical) }

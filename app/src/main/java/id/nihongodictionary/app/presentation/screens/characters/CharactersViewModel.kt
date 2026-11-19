@@ -8,6 +8,7 @@ import id.nihongodictionary.app.domain.model.KanaCategory
 import id.nihongodictionary.app.domain.model.KanjiFilterCategory
 import id.nihongodictionary.app.domain.model.KanjiGridItem
 import id.nihongodictionary.app.domain.repository.KanjiRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -51,12 +52,13 @@ class CharactersViewModel @Inject constructor(
     private val _audioFeedback = MutableSharedFlow<String>()
     val audioFeedback: SharedFlow<String> = _audioFeedback.asSharedFlow()
 
-    init {
-        loadKanjiList(KanjiFilterCategory.GRADE_1)
-    }
+    private val kanjiCache = mutableMapOf<KanjiFilterCategory, List<KanjiGridItem>>()
 
     fun selectTab(tab: MainCharacterTab) {
         _selectedTab.value = tab
+        if (tab == MainCharacterTab.KANJI && _kanjiState.value !is KanjiListUiState.Success) {
+            loadKanjiList(_selectedKanjiFilter.value)
+        }
     }
 
     fun selectKanaCategory(category: KanaCategory) {
@@ -69,10 +71,16 @@ class CharactersViewModel @Inject constructor(
     }
 
     fun loadKanjiList(filter: KanjiFilterCategory) {
+        kanjiCache[filter]?.let { cached ->
+            _kanjiState.value = KanjiListUiState.Success(cached)
+            return
+        }
+
         viewModelScope.launch {
             _kanjiState.value = KanjiListUiState.Loading
             kanjiRepository.getKanjiByFilter(filter).fold(
                 onSuccess = { list ->
+                    kanjiCache[filter] = list
                     _kanjiState.value = KanjiListUiState.Success(list)
                 },
                 onFailure = { error ->
@@ -86,9 +94,9 @@ class CharactersViewModel @Inject constructor(
 
     fun playAudio(text: String) {
         if (text.isBlank()) return
-        val success = ttsManager.speak(text)
-        if (!success) {
-            viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
+            val success = ttsManager.speak(text)
+            if (!success) {
                 _audioFeedback.emit("TTS belum siap atau bahasa Jepang belum tersedia")
             }
         }
