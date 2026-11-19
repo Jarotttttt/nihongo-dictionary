@@ -1,0 +1,40 @@
+# Gradle and Android
+.gradle/
+build/
+app/build/
+*.apk
+*.aab
+local.properties
+.cxx/
+captures/
+.externalNativeBuild/
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Python / ETL environment
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Raw dataset archives and downloaded dumps (prevent committing multi-hundred MB files)
+tools/etl/data/raw/
+tools/etl/data/interim/
+*.gz
+*.tar.bz2
+*.zip
+*.tar.gz
+
+# System files
+.DS_Store
+Thumbs.db
